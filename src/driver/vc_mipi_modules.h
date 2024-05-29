@@ -26,6 +26,7 @@
 #define MOD_ID_IMX568           0x0568
 #define MOD_ID_OV7251           0x7251
 #define MOD_ID_OV9281           0x9281
+#define MOD_ID_OV131            0x0131
 
 int vc_mod_is_color_sensor(struct vc_desc *desc);
 int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc);

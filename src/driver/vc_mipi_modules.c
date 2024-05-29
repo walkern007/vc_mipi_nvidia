@@ -736,6 +736,42 @@ static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL;
 }
 
+// ------------------------------------------------------------------------------------------------
+//  Settings for OV131 ISP (Rev.A)
+//  OCHFA10 - 720x720
+
+static void vc_init_ctrl_ov131(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+        INIT_MESSAGE("OV131")
+        
+        ctrl->exposure                  = (vc_control) { .min = 146, .max =    595000, .def =  10000 };
+        ctrl->gain                      = (vc_control) { .min =  16, .max =       255, .def =     16 };
+
+        ctrl->csr.sen.h_end             = (vc_csr2) { .l = 0x0000, .m = 0x0000 };
+        ctrl->csr.sen.v_end             = (vc_csr2) { .l = 0x0000, .m = 0x0000 };
+        ctrl->csr.sen.flash_duration	= (vc_csr4) { .l = 0x3928, .m = 0x3927, .h = 0x3926, .u = 0x3925 };
+        ctrl->csr.sen.flash_offset      = (vc_csr4) { .l = 0x3924, .m = 0x3923, .h = 0x3922, .u = 0x0000 };
+        ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x380f, .m = 0x380e, .h = 0x0000, .u = 0x0000 };
+        // NOTE: Modules rom table contains swapped address assigment.
+        ctrl->csr.sen.gain              = (vc_csr2) { .l = 0x3509, .m = 0x0000 };
+        
+        FRAME(0, 0, 720, 720)
+        //                       hmax  vmax      vmax   vmax  blkl  blkl  retrigger
+        //                              min       max    def   max   def
+        MODE(0, 2, FORMAT_RAW08,  227,   16,   0xffff,   910,    0,    0,         0)
+        //MODE(1, 2, FORMAT_RAW10,  227,   16,   0xffff,   910,    0,    0,         0)
+
+        ctrl->clk_ext_trigger           = 38400000;
+        ctrl->clk_pixel                 = 38400000;
+
+        //ctrl->flash_factor              = 1758241 >> 4; // (1000 << 4)/9100 >> 4
+        //ctrl->flash_toffset             = 4;
+
+        ctrl->flags                     = FLAG_EXPOSURE_OMNIVISION;
+        ctrl->flags                    |= FLAG_IO_ENABLED;
+        ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL;
+}
+
 
 int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
 {
@@ -767,6 +803,7 @@ int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
         case MOD_ID_IMX568: vc_init_ctrl_imx568(ctrl, desc); break;
         case MOD_ID_OV7251: vc_init_ctrl_ov7251(ctrl, desc); break;
         case MOD_ID_OV9281: vc_init_ctrl_ov9281(ctrl, desc); break;
+        case MOD_ID_OV131:  vc_init_ctrl_ov131(ctrl, desc); break;
         default:
                 vc_err(dev, "%s(): Detected module not supported!\n", __FUNCTION__);
                 return 1;

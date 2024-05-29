@@ -43,13 +43,13 @@ void vc_update_image_size_from_mode(struct tegracam_device *tc_dev,  __u32 *left
 
         image = &mode->image_properties;
         if (image->width != 0 && image->height != 0) {
-                *left = image->left;
-                *top = image->top;
+                // *left = image->left;
+                // *top = image->top;
                 *width = image->width;
                 *height = image->height;
 
-                vc_notice(dev, "%s(): Update image size from mode%u (l: %u, t: %u, w: %u, h: %u)\n",
-                        __FUNCTION__, mode_idx, *left, *top, *width, *height);
+                vc_notice(dev, "%s(): Update image size from mode%u (w: %u, h: %u)\n",
+                        __FUNCTION__, mode_idx, *width, *height);
         }
 }
 
@@ -355,36 +355,36 @@ static int vc_set_frame_rate(struct tegracam_device *tc_dev, __s64 val)
         return vc_core_set_framerate(cam, val);
 }
 
-static int vc_set_trigger_mode(struct tegracam_device *tc_dev, __s64 val)
-{
-        struct vc_cam *cam = tegracam_to_cam(tc_dev);
-        int ret = vc_mod_set_trigger_mode(cam, val);
-        vc_update_tegra_controls(tc_dev);
+// static int vc_set_trigger_mode(struct tegracam_device *tc_dev, __s64 val)
+// {
+//         struct vc_cam *cam = tegracam_to_cam(tc_dev);
+//         int ret = vc_mod_set_trigger_mode(cam, val);
+//         vc_update_tegra_controls(tc_dev);
 
-#if defined(VC_MIPI_JETSON_NANO) && defined(VC_MIPI_L4T_32_7_4)
-        ret = vc_set_channel_trigger_mode(tc_dev, (__u8)val);
-#endif
+// #if defined(VC_MIPI_JETSON_NANO) && defined(VC_MIPI_L4T_32_7_4)
+//         ret = vc_set_channel_trigger_mode(tc_dev, (__u8)val);
+// #endif
 
-        return ret;
-}
+//         return ret;
+// }
 
-static int vc_set_io_mode(struct tegracam_device *tc_dev, __s64 val)
-{
-        struct vc_cam *cam = tegracam_to_cam(tc_dev);
-        return vc_mod_set_io_mode(cam, val);
-}
+// static int vc_set_io_mode(struct tegracam_device *tc_dev, __s64 val)
+// {
+//         struct vc_cam *cam = tegracam_to_cam(tc_dev);
+//         return vc_mod_set_io_mode(cam, val);
+// }
 
-static int vc_set_black_level(struct tegracam_device *tc_dev, __s64 val)
-{
-        struct vc_cam *cam = tegracam_to_cam(tc_dev);
-        return vc_sen_set_blacklevel(cam, val);
-}
+// static int vc_set_black_level(struct tegracam_device *tc_dev, __s64 val)
+// {
+//         struct vc_cam *cam = tegracam_to_cam(tc_dev);
+//         return vc_sen_set_blacklevel(cam, val);
+// }
 
-static int vc_set_single_trigger(struct tegracam_device *tc_dev, bool val) 
-{
-        struct vc_cam *cam = tegracam_to_cam(tc_dev);
-        return vc_mod_set_single_trigger(cam);
-}
+// static int vc_set_single_trigger(struct tegracam_device *tc_dev, bool val) 
+// {
+//         struct vc_cam *cam = tegracam_to_cam(tc_dev);
+//         return vc_mod_set_single_trigger(cam);
+// }
 
 __u32 g_sleepR = 0;
 __u32 g_sleepS = 0;
@@ -678,11 +678,11 @@ static const __u32 ctrl_cid_list[] = {
         TEGRA_CAMERA_CID_SENSOR_MODE_ID,
         TEGRA_CAMERA_CID_GAIN,
         TEGRA_CAMERA_CID_EXPOSURE,
-        TEGRA_CAMERA_CID_BLACK_LEVEL,
+        //TEGRA_CAMERA_CID_BLACK_LEVEL,
         TEGRA_CAMERA_CID_FRAME_RATE,
-        TEGRA_CAMERA_CID_TRIGGER_MODE,
-        TEGRA_CAMERA_CID_IO_MODE,
-        TEGRA_CAMERA_CID_SINGLE_TRIGGER,
+        //TEGRA_CAMERA_CID_TRIGGER_MODE,
+        //TEGRA_CAMERA_CID_IO_MODE,
+        //TEGRA_CAMERA_CID_SINGLE_TRIGGER,
 #ifdef VC_CTRL_VALUE
         TEGRA_CAMERA_CID_VALUE,
 #endif
@@ -693,11 +693,11 @@ static struct tegracam_ctrl_ops vc_ctrl_ops = {
         .ctrl_cid_list = ctrl_cid_list,
         .set_gain = vc_set_gain,
         .set_exposure = vc_set_exposure,
-        .set_black_level = vc_set_black_level,
-        .set_single_trigger = vc_set_single_trigger,
+        //.set_black_level = vc_set_black_level,
+        //.set_single_trigger = vc_set_single_trigger,
         .set_frame_rate = vc_set_frame_rate,
-        .set_trigger_mode = vc_set_trigger_mode,
-        .set_io_mode = vc_set_io_mode,
+        //.set_trigger_mode = vc_set_trigger_mode,
+        //.set_io_mode = vc_set_io_mode,
         .set_group_hold = vc_set_group_hold,
 #ifdef VC_CTRL_VALUE
         .set_value = vc_set_value,
